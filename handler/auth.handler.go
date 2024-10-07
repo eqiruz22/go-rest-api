@@ -101,7 +101,7 @@ func RefreshToken(c *fiber.Ctx) error {
 // @Accept json
 // @Produce json
 // @Param data body request.AuthRequest true "Create login data"
-// @Success 200 {object} entity.Auth
+// @Success 201 {object} entity.Auth
 // @Failure 400 {object} utils.ErrorResponseSwagger
 // @Failure 404 {object} utils.ErrorResponseSwagger
 // @Router /auth-create [post]
