@@ -12,10 +12,11 @@ import (
 
 func RouteUser(route *fiber.App) {
 
-	route.Get("/user",handler.GetAllUser)
-	//route.Use()
-	route.Get("/user/:id",middleware.MiddlewareAccess,handler.GetById)
-	route.Post("/user",middleware.MiddlewareAccess,handler.UserCreate)
-	route.Patch("/user/:id",middleware.MiddlewareAccess,handler.UserUpdate)
-	route.Delete("/user/:id",middleware.MiddlewareAccess,handler.DeleteUser)
+	api :=route.Group("/api/v1")
+	api.Use(middleware.MiddlewareAccess)
+	api.Get("/user",handler.GetAllUser)
+	api.Get("/user/:id",middleware.AdminAcces,handler.GetById)
+	api.Post("/user",middleware.AdminAcces,handler.UserCreate)
+	api.Patch("/user/:id",middleware.AdminAcces,handler.UserUpdate)
+	api.Delete("/user/:id",middleware.AdminAcces,handler.DeleteUser)
 }

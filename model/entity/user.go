@@ -12,6 +12,8 @@ type User struct {
 	Email     string `json:"email" gorm:"index:,unique,type:varchar(100)"`
 	Address   string `json:"address" gorm:"type:varchar(100)"`
 	Phone     string `json:"phone" gorm:"type:varchar(100)"`
+	RoleId	  uint `json:"role_id"`
+	Role 	  Role `gorm:"foreignKey:RoleId"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `json:"-" gorm:"index,column:deleted_at"`

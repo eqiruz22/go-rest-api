@@ -2,12 +2,15 @@ package routes
 
 import (
 	"fiber/backend/handler"
+	"fiber/backend/middleware"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func RouteAuth(route *fiber.App) {
-	route.Post("/auth-create", handler.AuthCreate)
-	route.Post("/login", handler.Login)
-	route.Post("/refresh-token", handler.RefreshToken)
+	api := route.Group("/api/v1")
+	api.Post("/login", handler.Login)
+	api.Use(middleware.MiddlewareAccess)
+	api.Post("/auth-create", middleware.AdminAcces,handler.AuthCreate)
+	api.Post("/refresh-token", handler.RefreshToken)
 }

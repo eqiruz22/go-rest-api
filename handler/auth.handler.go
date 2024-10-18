@@ -35,7 +35,7 @@ func Login(c *fiber.Ctx) error {
 		return utils.JSONResponse(c,fiber.StatusBadRequest, "request error", err,nil)
 	}
 	var user entity.Auth
-	if err := database.DB.Debug().First(&user, "email = ?", req.Email).Error; err != nil {
+	if err := database.DB.Debug().Preload("Role").First(&user, "email = ?", req.Email).Error; err != nil {
 		return utils.JSONResponse(c,fiber.StatusNotFound,"OK","not found", nil)
 	}
 

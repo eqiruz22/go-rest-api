@@ -7,11 +7,13 @@ import (
 	"fiber/backend/model/response"
 	"fiber/backend/utils"
 	"fiber/backend/validation"
+	"fmt"
 	"log"
 	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 // @Summary Get user
@@ -30,7 +32,8 @@ func GetAllUser(c *fiber.Ctx) error {
 	pageParam := c.Query("page","1")
 	limitParam := c.Query("limit","10")
 	query := c.Query("query")
-
+	name := c.Locals("userInfo").(jwt.MapClaims)
+	username := name["username"].(string)
 	page, err := strconv.Atoi(pageParam)
 	if err != nil || page < 1 {
 		page = 1
@@ -43,16 +46,16 @@ func GetAllUser(c *fiber.Ctx) error {
 
 	offset := (page - 1) * limit
 
-	result := database.DB.Debug().Model(&users)
+	result := database.DB.Debug().Preload("Role").Model(&users)
 	if query != "" {
 		result = result.Where("name = ?", query).Or("email = ?",query)
 	}
 
+	fmt.Println(username)
 	// for pagination
 	if err := result.Count(&totalRecord).Limit(limit).Offset(offset).Find(&users).Error; err != nil {
 		return utils.JSONResponse(c,fiber.StatusInternalServerError,"error","unable to get users", err.Error())
 	}
-
 	return utils.JSONResponseWithPagination(c,fiber.StatusOK,"OK","Show all user", users,page,limit,totalRecord)
 }
 
@@ -119,7 +122,7 @@ func GetById(c *fiber.Ctx) error {
 	}
 
 	var user response.User
-	if err := database.DB.Debug().First(&user, "id = ?", userId).Error; err != nil {
+	if err := database.DB.Debug().Preload("Role").First(&user, "id = ?", userId).Error; err != nil {
 		return utils.JSONResponse(c,fiber.StatusNotFound,"OK","not found", nil)
 	}
 
